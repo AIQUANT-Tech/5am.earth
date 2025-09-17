@@ -30,22 +30,13 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Show build output (debug)
-        run: |
-          echo "dist exists? $( [ -d ./dist ] && echo yes || echo no )"
-          ls -la ./dist || true
-
       - name: Add SPA fallback (404 -> index.html)
-        if: success()
-        run: |
-          if [ -f dist/index.html ]; then
-            cp dist/index.html dist/404.html
-          fi
+        run: cp dist/index.html dist/404.html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./dist
+          publish_branch: gh-pages   #  build goes here
+          publish_dir: ./dist        #  only dist is published
           clean: true
