@@ -6,29 +6,46 @@ on:
       - main
 
 permissions:
-  contents: write   # 👈 allow pushing to gh-pages branch
+  contents: write
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: '18'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build project
         run: npm run build
+
+      - name: Show build output (debug)
+        run: |
+          echo "dist exists? $( [ -d ./dist ] && echo yes || echo no )"
+          ls -la ./dist || true
+
+      - name: Add SPA fallback (404 -> index.html)
+        if: success()
+        run: |
+          if [ -f dist/index.html ]; then
+            cp dist/index.html dist/404.html
+          fi
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
           publish_dir: ./dist
+          clean: true
