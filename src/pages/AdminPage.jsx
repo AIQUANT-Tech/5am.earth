@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import  { useState, useEffect } from "react";
 import { User } from "@/api/entities";
 import { SiteContent } from "@/api/entities";
 import { TeamMember } from "@/api/entities";
@@ -24,6 +25,7 @@ export default function AdminPage() {
                     loadData();
                 }
             } catch (error) {
+                console.log(error)
                 setIsAdmin(false);
             }
         };
@@ -32,7 +34,8 @@ export default function AdminPage() {
 
     const loadData = async () => {
         const content = await SiteContent.list();
-        setSiteContent(content.length > 0 ? content[0] : { heroBackgroundUrl: '', imageDividerUrl: '', visionImageUrl: '' });
+        // Initialize with new field 'firstImageDividerUrl' if no content exists
+        setSiteContent(content.length > 0 ? content[0] : { heroBackgroundUrl: '', firstImageDividerUrl: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c6eafa01c806bd216dd197/ab6311185_zachid_abstract_pictogram_showing_modular_building_blocks_label_3a3f2a26-7b6a-4dc4-9b08-e9b9f46919e6BackgroundRemoved.png', imageDividerUrl: '', visionImageUrl: '' });
 
         const members = await TeamMember.list('order');
         setTeamMembers(members);
@@ -47,7 +50,9 @@ export default function AdminPage() {
         if (siteContent.id) {
             await SiteContent.update(siteContent.id, siteContent);
         } else {
-            await SiteContent.create(siteContent);
+            const newContent = await SiteContent.create(siteContent);
+            // After creation, update the state with the full object including the new ID
+            setSiteContent(newContent);
         }
         alert('Site content updated!');
         loadData();
@@ -105,15 +110,19 @@ export default function AdminPage() {
                         <>
                             <div>
                                 <Label htmlFor="heroBackgroundUrl">Hero Background URL (Video/Image)</Label>
-                                <Input id="heroBackgroundUrl" name="heroBackgroundUrl" value={siteContent.heroBackgroundUrl} onChange={handleContentChange} />
+                                <Input id="heroBackgroundUrl" name="heroBackgroundUrl" value={siteContent.heroBackgroundUrl || ''} onChange={handleContentChange} />
                             </div>
                             <div>
-                                <Label htmlFor="imageDividerUrl">Image Divider URL</Label>
-                                <Input id="imageDividerUrl" name="imageDividerUrl" value={siteContent.imageDividerUrl} onChange={handleContentChange} />
+                                <Label htmlFor="firstImageDividerUrl">First Image Divider URL</Label>
+                                <Input id="firstImageDividerUrl" name="firstImageDividerUrl" value={siteContent.firstImageDividerUrl || ''} onChange={handleContentChange} />
+                            </div>
+                            <div>
+                                <Label htmlFor="imageDividerUrl">Second Image Divider URL</Label>
+                                <Input id="imageDividerUrl" name="imageDividerUrl" value={siteContent.imageDividerUrl || ''} onChange={handleContentChange} />
                             </div>
                             <div>
                                 <Label htmlFor="visionImageUrl">Vision Section Image URL</Label>
-                                <Input id="visionImageUrl" name="visionImageUrl" value={siteContent.visionImageUrl} onChange={handleContentChange} />
+                                <Input id="visionImageUrl" name="visionImageUrl" value={siteContent.visionImageUrl || ''} onChange={handleContentChange} />
                             </div>
                             <Button onClick={saveSiteContent}>Save Homepage Visuals</Button>
                         </>
@@ -131,11 +140,11 @@ export default function AdminPage() {
                         <form onSubmit={saveTeamMember} className="p-4 mb-6 bg-gray-50 rounded-lg space-y-4">
                             <h3 className="text-lg font-medium">{editingMember.id ? 'Edit' : 'Add'} Team Member</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><Label>Name</Label><Input name="name" value={editingMember.name} onChange={handleMemberChange} required /></div>
-                                <div><Label>Role</Label><Input name="role" value={editingMember.role} onChange={handleMemberChange} required /></div>
-                                <div className="md:col-span-2"><Label>Image URL</Label><Input name="imageUrl" value={editingMember.imageUrl} onChange={handleMemberChange} required /></div>
-                                <div className="md:col-span-2"><Label>Description</Label><Textarea name="description" value={editingMember.description} onChange={handleMemberChange} /></div>
-                                <div><Label>Order</Label><Input type="number" name="order" value={editingMember.order} onChange={handleMemberChange} /></div>
+                                <div><Label>Name</Label><Input name="name" value={editingMember.name || ''} onChange={handleMemberChange} required /></div>
+                                <div><Label>Role</Label><Input name="role" value={editingMember.role || ''} onChange={handleMemberChange} required /></div>
+                                <div className="md:col-span-2"><Label>Image URL</Label><Input name="imageUrl" value={editingMember.imageUrl || ''} onChange={handleMemberChange} required /></div>
+                                <div className="md:col-span-2"><Label>Description</Label><Textarea name="description" value={editingMember.description || ''} onChange={handleMemberChange} /></div>
+                                <div><Label>Order</Label><Input type="number" name="order" value={editingMember.order || ''} onChange={handleMemberChange} /></div>
                             </div>
                             <div className="flex gap-2">
                                 <Button type="submit">Save Member</Button>

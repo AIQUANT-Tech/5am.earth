@@ -6,14 +6,16 @@ import ImageDividerSection from "../components/home/ImageDividerSection";
 import TrustLayerSection from "../components/home/TrustLayerSection";
 import VisionSection from "../components/home/VisionSection";
 import HomepageContactFormSection from "../components/home/HomepageContactFormSection";
+import FirstImageDividerSection from "../components/home/FirstImageDividerSection";
 
 export default function Homepage() {
   return (
     <div className="overflow-x-hidden">
       <HeroSection />
       <DemocratizingAccessSection />
-      <ImageDividerSection />
+      <FirstImageDividerSection />
       <StakeholderSection />
+      <ImageDividerSection />
       <TrustLayerSection />
       <VisionSection />
       <HomepageContactFormSection />
