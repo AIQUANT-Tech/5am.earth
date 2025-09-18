@@ -66,6 +66,20 @@ const DemocratizingAccessSection = () => {
             ))}
           </div>
         </div>
+
+        {/* New Application Layer Section */}
+        <motion.div 
+          className="mt-24 text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={itemVariants}
+        >
+          <h2 className="section-headline text-gray-800 mb-6">The Application Layer</h2>
+          <p className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            Web2 and Web3 development tools that turn verified data into custom applications across hundreds of use cases—from DeFi protocols to traditional enterprise systems.
+          </p>
+        </motion.div>
       </div>
     </section>
   );
