@@ -1,8 +1,7 @@
-# Base44 App
+# 5am.Earth
+Live link: https://5amearth.netlify.app/
 
-
-This app was created automatically by Base44.
-It's a Vite+React app that communicates with the Base44 API.
+[![Netlify Status](https://api.netlify.com/api/v1/badges/ae1ec87f-872c-4fac-98aa-452e888df9b4/deploy-status)](https://app.netlify.com/projects/5amearth/deploys)
 
 ## Running the app
 
@@ -17,4 +16,3 @@ npm run dev
 npm run build
 ```
 
-For more information and support, please contact Base44 support at app@base44.com.
