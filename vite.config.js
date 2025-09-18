@@ -8,6 +8,7 @@ export default defineConfig({
   server: {
     allowedHosts: true
   },
+  base: '/', // ensure correct asset paths on Netlify
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
