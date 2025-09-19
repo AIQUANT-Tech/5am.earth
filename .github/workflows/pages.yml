@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ pages ]     # 🔁 deploys when you push to 'pages'
+    branches: [ main ]     # 🔁 deploys when you push to 'main'
   workflow_dispatch:        # manual run button
 
 permissions:
