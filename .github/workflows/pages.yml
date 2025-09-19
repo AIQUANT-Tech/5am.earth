@@ -3,6 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main ]     # 🔁 deploys when you push to 'main'
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
   workflow_dispatch:        # manual run button
 
 permissions:
