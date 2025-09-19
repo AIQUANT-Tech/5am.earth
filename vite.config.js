@@ -10,7 +10,8 @@ const __dirname  = path.dirname(__filename)
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/5am.earth/', // project site path
+  // base: '/5am.earth/', // project site path
+  base:'/',
   server: {
     allowedHosts: true
   },

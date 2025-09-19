@@ -104,7 +104,8 @@ function PagesContent() {
 
 export default function Pages() {
   return (
-   <Router basename={import.meta.env.BASE_URL.replace(/\/+$/, '')}>
+  //  <Router basename={import.meta.env.BASE_URL.replace(/\/+$/, '')}>
+    <Router>
       <PagesContent />
     </Router>
   );
