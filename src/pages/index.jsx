@@ -1,64 +1,111 @@
+// import Layout from "./Layout.jsx";
+
+// import Homepage from "./Homepage";
+
+// import About from "./About";
+
+// import Contact from "./Contact";
+
+// import AdminPage from "./AdminPage.jsx";
+
+// import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+
+// const PAGES = {
+
+//     Homepage: Homepage,
+
+//     About: About,
+
+//     Contact: Contact,
+
+//     AdminPage: AdminPage,
+
+// }
+
+// function _getCurrentPage(url) {
+//     if (url.endsWith('/')) {
+//         url = url.slice(0, -1);
+//     }
+//     let urlLastPart = url.split('/').pop();
+//     if (urlLastPart.includes('?')) {
+//         urlLastPart = urlLastPart.split('?')[0];
+//     }
+
+//     const pageName = Object.keys(PAGES).find(page => page.toLowerCase() === urlLastPart.toLowerCase());
+//     return pageName || Object.keys(PAGES)[0];
+// }
+
+// // Create a wrapper component that uses useLocation inside the Router context
+// function PagesContent() {
+//     const location = useLocation();
+//     const currentPage = _getCurrentPage(location.pathname);
+
+//     return (
+//         <Layout currentPageName={currentPage}>
+//             <Routes>
+
+//                 <Route path="/" element={<Homepage />} />
+//                 <Route path="/Homepage" element={<Homepage />} />
+//                 <Route path="/About" element={<About />} />
+//                 <Route path="/Contact" element={<Contact />} />
+//                 <Route path="/AdminPage" element={<AdminPage />} />
+
+//             </Routes>
+//         </Layout>
+//     );
+// }
+
+// export default function Pages() {
+//     return (
+//         <Router basename={import.meta.env.BASE_URL}>
+//             <PagesContent />
+//         </Router>
+//     );
+// }
+// pages/index.jsx (or wherever your Router/Routes live)
 import Layout from "./Layout.jsx";
-
 import Homepage from "./Homepage";
-
 import About from "./About";
-
 import Contact from "./Contact";
-
 import AdminPage from "./AdminPage.jsx";
-
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
 const PAGES = {
-
-    Homepage: Homepage,
-
-    About: About,
-
-    Contact: Contact,
-
-    AdminPage: AdminPage,
-
-}
+  Homepage,
+  About,
+  Contact,
+  AdminPage,
+};
 
 function _getCurrentPage(url) {
-    if (url.endsWith('/')) {
-        url = url.slice(0, -1);
-    }
-    let urlLastPart = url.split('/').pop();
-    if (urlLastPart.includes('?')) {
-        urlLastPart = urlLastPart.split('?')[0];
-    }
-
-    const pageName = Object.keys(PAGES).find(page => page.toLowerCase() === urlLastPart.toLowerCase());
-    return pageName || Object.keys(PAGES)[0];
+  if (url.endsWith('/')) url = url.slice(0, -1);
+  let urlLastPart = url.split('/').pop() || '';
+  if (urlLastPart.includes('?')) urlLastPart = urlLastPart.split('?')[0];
+  const pageName = Object.keys(PAGES).find(page => page.toLowerCase() === urlLastPart.toLowerCase());
+  return pageName || Object.keys(PAGES)[0];
 }
 
-// Create a wrapper component that uses useLocation inside the Router context
 function PagesContent() {
-    const location = useLocation();
-    const currentPage = _getCurrentPage(location.pathname);
+  const location = useLocation();
+  const currentPage = _getCurrentPage(location.pathname);
 
-    return (
-        <Layout currentPageName={currentPage}>
-            <Routes>
-
-                <Route path="/" element={<Homepage />} />
-                <Route path="/Homepage" element={<Homepage />} />
-                <Route path="/About" element={<About />} />
-                <Route path="/Contact" element={<Contact />} />
-                <Route path="/AdminPage" element={<AdminPage />} />
-
-            </Routes>
-        </Layout>
-    );
+  return (
+    <Layout currentPageName={currentPage}>
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/homepage" element={<Homepage />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/admin-page" element={<AdminPage />} />
+      </Routes>
+    </Layout>
+  );
 }
 
 export default function Pages() {
-    return (
-        <Router basename={import.meta.env.BASE_URL}>
-            <PagesContent />
-        </Router>
-    );
+  return (
+   <Router basename={import.meta.env.BASE_URL.replace(/\/+$/, '')}>
+      <PagesContent />
+    </Router>
+  );
 }
