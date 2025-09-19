@@ -1,14 +1,16 @@
 
 
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation,useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Menu, X, Globe } from "lucide-react";
+import { routePath, absoluteUrl } from "@/utils";
 
 export default function Layout({ children, currentPageName }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,15 +20,26 @@ export default function Layout({ children, currentPageName }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // const scrollToSection = (sectionId) => {
+  //   if (location.pathname === createPageUrl('Homepage')) {
+  //     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+  //   } else {
+  //     // Use full URL for navigation from other pages
+  //     window.location.href = `${window.location.origin}${createPageUrl('Homepage')}#${sectionId}`;
+  //   }
+  //   setMobileMenuOpen(false);
+  // };
   const scrollToSection = (sectionId) => {
-    if (location.pathname === createPageUrl('Homepage')) {
-      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      // Use full URL for navigation from other pages
-      window.location.href = `${window.location.origin}${createPageUrl('Homepage')}#${sectionId}`;
-    }
-    setMobileMenuOpen(false);
-  };
+  const homePath = routePath('Homepage'); // '/'
+  if (location.pathname === homePath) {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+  } else {
+    // Navigate to home, then scroll after render
+    navigate(homePath + `#${sectionId}`);
+    // (Optional: add a small effect on Home to read location.hash and scroll)
+  }
+  setMobileMenuOpen(false);
+};
 
   const navItems = [
     { label: "Why 5AM Earth", id: "why" },
@@ -100,7 +113,7 @@ export default function Layout({ children, currentPageName }) {
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
-            <Link to={createPageUrl('Homepage')} className="flex items-center space-x-2 text-xl font-bold tracking-tighter">
+            <Link to={routePath('Homepage')} className="flex items-center space-x-2 text-xl font-bold tracking-tighter">
               <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c6eafa01c806bd216dd197/ae18d560d_logo.png" alt="5am Earth Logo" className={`h-6 lg:h-8 w-auto transition-all duration-300 ${isScrolled || currentPageName !== 'Homepage' ? '' : 'filter invert brightness-0'}`} />
             </Link>
 
@@ -182,7 +195,7 @@ export default function Layout({ children, currentPageName }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
             <div className="col-span-2 md:col-span-2">
-              <Link to={createPageUrl('Homepage')} className="flex items-center space-x-2 text-xl font-bold tracking-tighter mb-4">
+              <Link to={routePath('Homepage')} className="flex items-center space-x-2 text-xl font-bold tracking-tighter mb-4">
                  <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c6eafa01c806bd216dd197/ae18d560d_logo.png" alt="5am Earth Logo" className="h-8 w-auto filter invert" />
               </Link>
               <p className="text-gray-400 max-w-xs">
@@ -202,8 +215,8 @@ export default function Layout({ children, currentPageName }) {
              <div className="text-sm">
               <h3 className="font-semibold mb-4 text-gray-400 uppercase tracking-wider">Company</h3>
               <div className="space-y-3">
-                <Link to={createPageUrl('About')} className="block text-gray-300 hover:text-white">About</Link>
-                <Link to={createPageUrl('Contact')} className="block text-gray-300 hover:text-white">Contact</Link>
+                <Link to={routePath('About')}  className="block text-gray-300 hover:text-white">About</Link>
+                <Link to={routePath('Contact')} className="block text-gray-300 hover:text-white">Contact</Link>
               </div>
             </div>
 
