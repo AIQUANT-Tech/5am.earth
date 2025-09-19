@@ -11,15 +11,15 @@ import AdminPage from "./AdminPage.jsx";
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
 const PAGES = {
-    
+
     Homepage: Homepage,
-    
+
     About: About,
-    
+
     Contact: Contact,
-    
+
     AdminPage: AdminPage,
-    
+
 }
 
 function _getCurrentPage(url) {
@@ -39,22 +39,17 @@ function _getCurrentPage(url) {
 function PagesContent() {
     const location = useLocation();
     const currentPage = _getCurrentPage(location.pathname);
-    
+
     return (
         <Layout currentPageName={currentPage}>
-            <Routes>            
-                
-                    <Route path="/" element={<Homepage />} />
-                
-                
+            <Routes>
+
+                <Route path="/" element={<Homepage />} />
                 <Route path="/Homepage" element={<Homepage />} />
-                
                 <Route path="/About" element={<About />} />
-                
                 <Route path="/Contact" element={<Contact />} />
-                
                 <Route path="/AdminPage" element={<AdminPage />} />
-                
+
             </Routes>
         </Layout>
     );
@@ -62,7 +57,7 @@ function PagesContent() {
 
 export default function Pages() {
     return (
-        <Router>
+        <Router basename={import.meta.env.BASE_URL}>
             <PagesContent />
         </Router>
     );
