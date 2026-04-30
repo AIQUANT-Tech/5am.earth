@@ -39,6 +39,8 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* Ensure [hidden] always wins — prevents display:grid/flex overrides */
+  [hidden] { display: none !important; }
 
   html, body {
     background: var(--white);
@@ -56,29 +58,56 @@
 
   /* ---------- Top nav ---------- */
   .nav {
-    position: sticky; top: 0; z-index: 50;
-    background: var(--white);
-    border-bottom: 1px solid var(--ink);
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    background: transparent;
+    border-bottom: 1px solid transparent;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
     padding: 14px 28px;
     font-size: 13px;
+    color: var(--white);
+    transition: background .25s ease, border-color .25s ease, color .25s ease;
   }
+  .nav.scrolled {
+    background: var(--white);
+    border-bottom: 1px solid var(--ink);
+    color: var(--ink);
+  }
+  .nav.scrolled .nav-fiveam { color: var(--ink-60); }
   .nav-left  { justify-self: start; font-weight: bold; letter-spacing: .02em; display:flex; align-items:center; }
   .nav-left img {
     height: 22px; width: auto; display: block;
     opacity: 0; transform: translateY(-6px);
     transition: opacity .3s ease, transform .3s ease;
+    filter: brightness(0) invert(1);
   }
   .nav-left.show img { opacity: 1; transform: translateY(0); }
-  /* green tint filter tuned for the white logo PNG -> brand green #009a3d */
-  .nav-left img {
+  .nav.scrolled .nav-left img {
     filter: brightness(0) saturate(100%) invert(36%) sepia(85%) saturate(1694%) hue-rotate(122deg) brightness(93%) contrast(101%);
   }
   .nav-mid   { justify-self: center; display: flex; gap: 28px; }
-  .nav-right { justify-self: end;   display: flex; gap: 18px; }
-  .nav a { text-transform: lowercase; }
+  .nav-right { justify-self: end; display: flex; gap: 18px; align-items: center; }
+  .nav a { text-transform: lowercase; font-weight: 700; }
+  .nav-mid a, .nav-right a { font-weight: 700; }
+  .nav-fiveam {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: rgba(255,255,255,.7);
+    display: flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+  }
+  .nav-fiveam .pulse {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 0 rgba(0,154,61,.6);
+    animation: heartbeat 2.4s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes heartbeat {
+    0%,100% { box-shadow: 0 0 0 0 rgba(0,154,61,.6); }
+    50%      { box-shadow: 0 0 0 5px rgba(0,154,61,0); }
+  }
   .nav .dot { display:inline-block; width:8px; height:8px; border-radius:50%; background: var(--green); transform: translateY(-1px); margin-right: 6px; }
 
   /* ---------- Hero (full-bleed green w/ video) ---------- */
@@ -634,12 +663,21 @@
     padding: 100px 6vw 40px;
   }
   .foot-top {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1fr;
-    gap: 60px;
+    display: block;
     padding-bottom: 80px;
     border-bottom: 1px solid rgba(255,255,255,.2);
+    max-width: 480px;
   }
+  .foot-email {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-top: 28px;
+    font-size: 15px; font-weight: 700;
+    color: var(--white); opacity: .85;
+    letter-spacing: -.01em;
+    transition: opacity .15s;
+  }
+  .foot-email:hover { opacity: 1; text-decoration: none; }
+  .foot-email svg { width: 18px; height: 18px; flex-shrink: 0; opacity: .7; }
   .foot-top h5 { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; margin-bottom: 22px; opacity: .6; }
   .foot-top ul { list-style: none; }
   .foot-top li { padding: 6px 0; font-size: 15px; }
@@ -816,6 +854,7 @@
     <a href="#partners">partners</a>
   </div>
   <div class="nav-right">
+    <span class="nav-fiveam"><span class="pulse"></span><span id="fiveam-label">—</span> · 5am</span>
   </div>
 </nav>
 
@@ -881,7 +920,7 @@
 </section>
 
 <!-- ============== TICKER ============== -->
-<div class="ticker">
+<div class="ticker" hidden>
   <div class="ticker-track">
     <!-- 2x for seamless loop -->
     <div class="ticker-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg><span class="num">84%</span><span class="lbl">improvement in verified insights</span></div>
@@ -1400,7 +1439,7 @@
 </section>
 
 <!-- ============== IMPACT ============== -->
-<section class="impact">
+<section class="impact" hidden>
   <div class="big">84<sup>%</sup></div>
   <div class="copy">
     <p>Improvement in verified, actionable insights driving farmer decisions.</p>
@@ -1629,34 +1668,12 @@
         <img src="logo.png" alt="5am.Earth">
       </div>
       <p class="foot-desc">Hidden insights. Real wealth. A neutral foundation for verified agricultural intelligence — built to last decades, not quarters.</p>
+      <a class="foot-email" href="mailto:hello@5am.earth">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="16" height="12" rx="2"/><path d="M2 7l8 5 8-5"/></svg>
+        hello@5am.earth
+      </a>
     </div>
-    <div>
-      <h5>Platform</h5>
-      <ul>
-        <li><a>Intelligence</a></li>
-        <li><a>Trust</a></li>
-        <li><a>Analysis</a></li>
-        <li><a>Applications</a></li>
-      </ul>
-    </div>
-    <div>
-      <h5>Company</h5>
-      <ul>
-        <li><a>About</a></li>
-        <li><a>Mission</a></li>
-        <li><a>Governance</a></li>
-        <li><a>Contact</a></li>
-      </ul>
-    </div>
-    <div>
-      <h5>Resources</h5>
-      <ul>
-        <li><a>Charter (PDF)</a></li>
-        <li><a>Documentation</a></li>
-        <li><a>API</a></li>
-        <li><a>Open source</a></li>
-      </ul>
-    </div>
+    <!-- Platform, Company, Resources columns hidden -->
   </div>
 
   <div class="foot-giant">5am.earth —</div>
@@ -1791,16 +1808,51 @@
 
   apply();
 
-  // Reveal nav logo on scroll
+  // Nav scroll: transparent over hero, solid after
+  const nav = document.querySelector('.nav');
   const navLeft = document.querySelector('.nav-left');
   const hero = document.querySelector('.hero');
   function onScroll() {
-    const threshold = hero ? hero.offsetHeight * 0.25 : 120;
-    if (window.scrollY > threshold) navLeft.classList.add('show');
-    else navLeft.classList.remove('show');
+    const heroH = hero ? hero.offsetHeight : window.innerHeight;
+    const past = window.scrollY > heroH * 0.25;
+    nav.classList.toggle('scrolled', past);
+    navLeft.classList.toggle('show', past);
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
+
+  // 5am country indicator — show whichever country/region is currently at 5am
+  (function fiveAmCountry() {
+    const MAP = {
+      '-12': 'Baker Island', '-11': 'American Samoa', '-10': 'Hawaiʻi',
+      '-9': 'Alaska', '-8': 'California', '-7': 'Colorado',
+      '-6': 'Mexico City', '-5': 'Colombia', '-4': 'Bolivia',
+      '-3': 'São Paulo', '-2': 'South Georgia', '-1': 'Cape Verde',
+      '0': 'Ghana', '1': 'Nigeria', '2': 'Kenya',
+      '3': 'Tanzania', '4': 'UAE', '5': 'Pakistan',
+      '5.5': 'India', '6': 'Bangladesh', '6.5': 'Myanmar',
+      '7': 'Thailand', '8': 'Philippines', '9': 'Japan',
+      '10': 'Sydney', '11': 'Solomon Islands', '12': 'New Zealand',
+      '13': 'Samoa', '14': 'Kiribati'
+    };
+    function get5amCountry() {
+      const now = new Date();
+      const utcH = now.getUTCHours();
+      const utcM = now.getUTCMinutes();
+      // UTC offset where local clock shows 05:xx
+      let offset = 5 - utcH - utcM / 60;
+      if (offset < -12) offset += 24;
+      if (offset > 14)  offset -= 24;
+      // Try exact half-hour slots first, then round
+      const half = Math.round(offset * 2) / 2;
+      return MAP[String(half)] || MAP[String(Math.round(offset))] || 'Earth';
+    }
+    const label = document.getElementById('fiveam-label');
+    function update() { if (label) label.textContent = get5amCountry(); }
+    update();
+    // Refresh every minute so it follows the sun
+    setInterval(update, 60000);
+  })();
 
   // --- Vertical Cut Reveal: split text into chars, stagger translateY ---
   function buildVCR(root) {
