@@ -760,7 +760,10 @@
     background: var(--white);
     font-size: 13px; font-weight: 600;
     cursor: pointer;
-    transition: background .15s, color .15s;
+    transition: background .15s, color .15s, border-color .15s;
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 0;
   }
   .modal .pill:hover { background: var(--pink-soft); }
   .modal .pill.active { background: var(--green); color: var(--white); border-color: var(--green); }
@@ -1765,7 +1768,7 @@
       });
 
       if (res.ok || res.status === 204) {
-        status.textContent = 'Message sent! We'll be in touch within 5 business days.';
+        status.textContent = "Message sent! We'll be in touch within 5 business days.";
         this.reset();
         setTimeout(() => document.getElementById('reg-modal').classList.remove('open'), 2000);
       } else {
