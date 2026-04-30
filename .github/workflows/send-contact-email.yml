@@ -1,0 +1,31 @@
+name: Send Contact Email
+
+on:
+  repository_dispatch:
+    types: [contact-form]
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: reply.5am.earth@gmail.com
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: "5am.earth — New inquiry from ${{ github.event.client_payload.name }}"
+          to: yoram@elksconnect.com
+          from: "5am.earth Foundation <reply.5am.earth@gmail.com>"
+          body: |
+            New contact form submission from 5am.earth
+
+            Role: ${{ github.event.client_payload.role }}
+            Name: ${{ github.event.client_payload.name }}
+            Organization: ${{ github.event.client_payload.organization }}
+            Email: ${{ github.event.client_payload.email }}
+
+            Message:
+            ${{ github.event.client_payload.message }}

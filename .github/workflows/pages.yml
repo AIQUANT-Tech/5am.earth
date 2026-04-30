@@ -26,6 +26,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Inject dispatch token
+        run: sed -i 's|__DISPATCH_TOKEN__|${{ secrets.DISPATCH_TOKEN }}|g' index.html
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 

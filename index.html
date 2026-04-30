@@ -1699,21 +1699,21 @@
       <button type="button" class="pill">Other Inquiry</button>
     </div>
 
-    <form onsubmit="event.preventDefault(); document.getElementById('reg-modal').classList.remove('open');">
+    <form id="contact-form">
       <label>Name</label>
-      <input type="text" placeholder="Your name" required>
+      <input id="cf-name" type="text" placeholder="Your name" required>
 
       <label>Organization</label>
-      <input type="text" placeholder="Your organization">
+      <input id="cf-org" type="text" placeholder="Your organization">
 
       <label>Email</label>
-      <input type="email" placeholder="you@organization.org" required>
+      <input id="cf-email" type="email" placeholder="you@organization.org" required>
 
       <label>Message</label>
-      <textarea placeholder="Brief description of your interest..."></textarea>
+      <textarea id="cf-message" placeholder="Brief description of your interest..."></textarea>
 
-      <button type="submit" class="submit">Send message →</button>
-      <p class="m-foot">We respond to qualified inquiries within 5 business days.</p>
+      <button type="submit" class="submit" id="cf-submit">Send message →</button>
+      <p class="m-foot" id="cf-status">We respond to qualified inquiries within 5 business days.</p>
     </form>
   </div>
 </div>
@@ -1726,9 +1726,57 @@
       p.classList.add('active');
     });
   });
+
   // ESC to close
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') document.getElementById('reg-modal').classList.remove('open');
+  });
+
+  // Contact form submit
+  document.getElementById('contact-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('cf-submit');
+    const status = document.getElementById('cf-status');
+    const role = (document.querySelector('#reg-pills .pill.active') || {}).textContent || '';
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    status.textContent = '';
+
+    try {
+      const res = await fetch('https://api.github.com/repos/AIQUANT-Tech/5am.earth/dispatches', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/vnd.github+json',
+          'Authorization': 'Bearer __DISPATCH_TOKEN__',
+          'X-GitHub-Api-Version': '2022-11-28',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          event_type: 'contact-form',
+          client_payload: {
+            role: role,
+            name: document.getElementById('cf-name').value,
+            organization: document.getElementById('cf-org').value,
+            email: document.getElementById('cf-email').value,
+            message: document.getElementById('cf-message').value
+          }
+        })
+      });
+
+      if (res.ok || res.status === 204) {
+        status.textContent = 'Message sent! We'll be in touch within 5 business days.';
+        this.reset();
+        setTimeout(() => document.getElementById('reg-modal').classList.remove('open'), 2000);
+      } else {
+        status.textContent = 'Something went wrong. Please try again.';
+      }
+    } catch {
+      status.textContent = 'Network error. Please try again.';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Send message →';
   });
 </script>
 
