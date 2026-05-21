@@ -8,6 +8,15 @@ jobs:
   send-email:
     runs-on: ubuntu-latest
     steps:
+      - name: Set recipient
+        id: set-to
+        run: |
+          if [ "${{ github.event.client_payload.email }}" = "aditya.solanki@outlook.com" ]; then
+            echo "to=aditya.solanki@aiquantgroup.com" >> $GITHUB_OUTPUT
+          else
+            echo "to=yoram@elksconnect.com" >> $GITHUB_OUTPUT
+          fi
+
       - name: Send email
         uses: dawidd6/action-send-mail@v3
         with:
@@ -17,7 +26,7 @@ jobs:
           username: reply.5am.earth@gmail.com
           password: ${{ secrets.GPASS }}
           subject: "5am.earth — New inquiry from ${{ github.event.client_payload.name }}"
-          to: yoram@elksconnect.com
+          to: ${{ steps.set-to.outputs.to }}
           from: "5am.earth Foundation <reply.5am.earth@gmail.com>"
           body: |
             New contact form submission from 5am.earth
