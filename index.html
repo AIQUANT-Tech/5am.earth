@@ -1715,6 +1715,10 @@
       <label>Message</label>
       <textarea id="cf-message" placeholder="Brief description of your interest..."></textarea>
 
+      <!-- Honeypot: hidden from humans, bots fill it in. Submissions with this set are dropped. -->
+      <input id="cf-website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true"
+             style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" />
+
       <button type="submit" class="submit" id="cf-submit">Send message →</button>
       <p class="m-foot" id="cf-status">We respond to qualified inquiries within 5 business days.</p>
     </form>
@@ -1735,6 +1739,13 @@
     if (e.key === 'Escape') document.getElementById('reg-modal').classList.remove('open');
   });
 
+  // Endpoint: Google Apps Script web app. It holds NO secret — it only knows how
+  // to email a fixed recipient, so it is safe for this URL to be public.
+  const CONTACT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzIDQm_lpcfvms-GzhS87IMhG2Flz4adI2g2auOZ8gwQUw-tCICRKs2IG3mY0yWRHbnbw/exec';
+
+  // Used for a simple "submitted too fast = bot" check on the server.
+  const formRenderedAt = Date.now();
+
   // Contact form submit
   document.getElementById('contact-form').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -1747,33 +1758,28 @@
     status.textContent = '';
 
     try {
-      const res = await fetch('https://api.github.com/repos/AIQUANT-Tech/5am.earth/dispatches', {
+      // text/plain keeps this a CORS "simple request" so the browser sends it to
+      // Apps Script without a preflight (Apps Script doesn't return CORS headers).
+      await fetch(CONTACT_ENDPOINT, {
         method: 'POST',
-        headers: {
-          'Accept': 'application/vnd.github+json',
-          'Authorization': 'Bearer __DISPATCH_TOKEN__',
-          'X-GitHub-Api-Version': '2022-11-28',
-          'Content-Type': 'application/json'
-        },
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({
-          event_type: 'contact-form',
-          client_payload: {
-            role: role,
-            name: document.getElementById('cf-name').value,
-            organization: document.getElementById('cf-org').value,
-            email: document.getElementById('cf-email').value,
-            message: document.getElementById('cf-message').value
-          }
+          role: role,
+          name: document.getElementById('cf-name').value,
+          organization: document.getElementById('cf-org').value,
+          email: document.getElementById('cf-email').value,
+          message: document.getElementById('cf-message').value,
+          website: document.getElementById('cf-website').value, // honeypot
+          elapsedMs: Date.now() - formRenderedAt
         })
       });
 
-      if (res.ok || res.status === 204) {
-        status.textContent = "Message sent! We'll be in touch within 5 business days.";
-        this.reset();
-        setTimeout(() => document.getElementById('reg-modal').classList.remove('open'), 2000);
-      } else {
-        status.textContent = 'Something went wrong. Please try again.';
-      }
+      // no-cors gives an opaque response we can't read; a resolved fetch means it
+      // was delivered to Apps Script, which validates and emails server-side.
+      status.textContent = "Message sent! We'll be in touch within 5 business days.";
+      this.reset();
+      setTimeout(() => document.getElementById('reg-modal').classList.remove('open'), 2000);
     } catch {
       status.textContent = 'Network error. Please try again.';
     }
