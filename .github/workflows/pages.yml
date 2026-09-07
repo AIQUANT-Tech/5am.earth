@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, staging ]
     paths-ignore:
       - 'README.md'
   workflow_dispatch:
@@ -23,8 +23,20 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout
+      - name: Checkout main
         uses: actions/checkout@v4
+        with:
+          ref: main
+          path: site
+
+      - name: Checkout staging
+        uses: actions/checkout@v4
+        with:
+          ref: staging
+          path: site/staging
+
+      - name: Drop git metadata
+        run: rm -rf site/.git site/staging/.git site/staging/.github
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -32,7 +44,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: '.'
+          path: 'site'
 
       - name: Deploy
         id: deployment
